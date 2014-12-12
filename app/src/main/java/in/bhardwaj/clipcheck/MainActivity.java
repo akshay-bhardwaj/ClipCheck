@@ -9,11 +9,14 @@ import android.view.MenuItem;
 
 public class MainActivity extends ActionBarActivity {
 
-    private abstract class clipChange implements ClipboardManager.OnPrimaryClipChangedListener{
+    private ClipChangeReal inew;
+    private ClipboardManager mgr;
+
+    private abstract class ClipChange implements ClipboardManager.OnPrimaryClipChangedListener{
         public abstract void onPrimaryClipChanged();
     }
 
-    private class clipChangeReal extends clipChange {
+    private class ClipChangeReal extends ClipChange {
         @Override
         public void onPrimaryClipChanged(){
             System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>  ");
@@ -24,8 +27,9 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ClipboardManager mgr = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
-        mgr.addPrimaryClipChangedListener(new clipChangeReal());
+        inew = new ClipChangeReal();
+        mgr = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
+        mgr.addPrimaryClipChangedListener(inew);
     }
 
 
@@ -49,5 +53,11 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        mgr.removePrimaryClipChangedListener(inew);
     }
 }
